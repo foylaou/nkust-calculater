@@ -20,8 +20,11 @@
     "build:all": "npm run build && electron-builder --win --mac --linux"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.17",
+    "lucide-react": "^0.555.0",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "tailwindcss": "^4.1.17"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
@@ -29,6 +32,7 @@
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react-swc": "^4.2.2",
+    "electron": "^39.2.5",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
@@ -37,8 +41,7 @@
     "typescript-eslint": "^8.46.4",
     "vite": "^7.2.4"
   },
-
-    "build": {
+  "build": {
     "appId": "com.nkust.smart-calculator",
     "productName": "智慧商用計算機",
     "copyright": "Copyright © 2024 NKUST",

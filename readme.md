@@ -233,13 +233,13 @@ spawn(command, args, { windowsHide: true });
 
 ## 技術棧
 
-| 類別 | 技術 |
-|------|------|
-| 後端框架 | FastAPI, Python 3.10+ |
-| AI | Anthropic Claude API |
+| 類別 | 技術                          |
+|------|-----------------------------|
+| 後端框架 | FastAPI, Python 3.10+       |
+| AI | Claude 、ChatGPT、Gemini      |
 | 前端框架 | Electron, React, TypeScript |
-| 建構工具 | Vite, PyInstaller |
-| 通訊 | stdin/stdout IPC |
+| 建構工具 | Vite, PyInstaller           |
+| 通訊 | stdin/stdout IPC            |
 
 ## License
 
