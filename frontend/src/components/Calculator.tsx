@@ -118,7 +118,7 @@ export default function Calculator() {
     ];
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4">
+        <div className="flex items-center justify-center min-h-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4">
             <div className="flex gap-0 max-w-6xl w-full">
                 {/* Calculator Section */}
                 <div className={`transition-all duration-500 ${showAIProcess ? 'w-1/2' : 'w-full max-w-md mx-auto'}`}>

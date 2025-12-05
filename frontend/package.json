@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "description": "智慧商用計算機 - AI Agent powered commercial calculator",
   "author": "NKUST Electronic Engineering - AI Security Group - Foy",
+  "main": "main.cjs",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -51,8 +52,8 @@
     },
     "files": [
       "dist/**/*",
-      "main.js",
-      "preload.js",
+      "main.cjs",
+      "preload.cjs",
       "package.json"
     ],
     "extraResources": [
