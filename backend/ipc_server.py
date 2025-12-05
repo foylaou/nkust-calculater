@@ -14,10 +14,52 @@ from core.units import UnitConverter
 from core.commercial import CommercialCalculator
 from agent.tools import AgentToolkit
 from agent.llm_client import SmartCalculatorAgent
-
+import requests
 
 class IPCServer:
 
+    def validate_api_key(api_key: str) -> bool:
+        """
+        透過一個測試請求來驗證 API 金鑰的有效性。
+
+        Args:
+            api_key: 從使用者那裡取得的 API 金鑰。
+
+        Returns:
+            True 如果金鑰有效，否則 False。
+        """
+        # **請將此 URL 換成您要使用的真實 API 的驗證端點**
+        # 範例：一個查詢帳戶狀態的端點
+        validation_url = "https://api.hypothetical-service.com/v1/account/status"
+
+        # API 金鑰通常放在 HTTP 標頭 (Header) 中
+        # **請根據您的 API 文件修改標頭的格式** (例如可能是 'X-Api-Key')
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+
+        print(f"正在驗證 API 金鑰...")
+
+        try:
+            # 發送一個 GET 請求，並設定超時以防應用程式卡住
+            response = requests.get(validation_url, headers=headers, timeout=10)
+
+            # 檢查回應狀態碼
+            if response.status_code == 200:
+                print("API 金鑰驗證成功！")
+                return True
+            elif response.status_code in [401, 403]:
+                print(f"API 金鑰無效或沒有權限 (狀態碼: {response.status_code})")
+                return False
+            else:
+                print(f"API 金鑰驗證失敗，伺服器回應: {response.status_code}")
+                return False
+
+        except requests.exceptions.RequestException as e:
+            # 處理網路連線錯誤
+            print(f"驗證 API 金鑰時發生網路錯誤: {e}")
+            return False
 
     def __init__(self):
         self.engine = CalculatorEngine()
@@ -25,9 +67,12 @@ class IPCServer:
         self.commercial = CommercialCalculator()
         self.toolkit = AgentToolkit(self.engine, self.units, self.commercial)
 
-
-        if not os.getenv("ANTHROPIC_API_KEY"):
-            sys.stderr.write("Warning: ANTHROPIC_API_KEY not set. AI Agent will not work.\n")
+        # Determine if either ANTHROPIC_API_KEY or OPENAI_API_KEY is set
+        has_anthropic_key = os.getenv("ANTHROPIC_API_KEY")
+        has_openai_key = os.getenv("OPENAI_API_KEY")
+        has_gemeni_key = os.getenv("GEMENI_API_KEY")
+        if not (has_anthropic_key or has_openai_key or has_gemeni_key):
+            sys.stderr.write("Warning: Neither ANTHROPIC_API_KEY, OPENAI_API_KEY, nor GEMENI_API_KEY is set. AI Agent will not work.\n")
             sys.stderr.flush()
             self.agent = None
         else:
