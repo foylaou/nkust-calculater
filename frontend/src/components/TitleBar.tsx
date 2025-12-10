@@ -1,4 +1,5 @@
 import { Minus, Square, X } from 'lucide-react';
+import * as React from "react";
 
 // Extend Window interface to include electron API
 declare global {
@@ -7,7 +8,7 @@ declare global {
       minimize: () => void;
       maximize: () => void;
       close: () => void;
-      platform: string;
+      platform: 'darwin' | 'win32' | 'linux' | 'aix' | 'freebsd' | 'openbsd' | 'sunos';
     };
   }
 }
@@ -30,11 +31,6 @@ export default function TitleBar() {
   return (
     <div className="fixed top-0 left-0 right-0 h-12 bg-[#202225] flex items-center justify-between select-none z-50"
          style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}>
-
-      {/* App Title */}
-      <div className="flex items-center px-4">
-        <span className="text-sm font-semibold text-gray-300">智慧商用計算機</span>
-      </div>
 
       {/* Window Controls - Only show on Windows/Linux */}
       {!isMac && (

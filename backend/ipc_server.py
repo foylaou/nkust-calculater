@@ -9,11 +9,7 @@ import os
 sys.stdout.reconfigure(encoding='utf-8')
 sys.stderr.reconfigure(encoding='utf-8')
 
-from core.engine import CalculatorEngine
-from core.units import UnitConverter
-from core.commercial import CommercialCalculator
-from agent.tools import AgentToolkit
-from agent.llm_client import SmartCalculatorAgent
+from agent.agent import AI_Agent
 import requests
 
 class IPCServer:
@@ -62,66 +58,73 @@ class IPCServer:
             return False
 
     def __init__(self):
-        self.engine = CalculatorEngine()
-        self.units = UnitConverter()
-        self.commercial = CommercialCalculator()
-        self.toolkit = AgentToolkit(self.engine, self.units, self.commercial)
-
-        # Determine if either ANTHROPIC_API_KEY or OPENAI_API_KEY is set
-        has_anthropic_key = os.getenv("ANTHROPIC_API_KEY")
-        has_openai_key = os.getenv("OPENAI_API_KEY")
-        has_gemeni_key = os.getenv("GEMENI_API_KEY")
-        if not (has_anthropic_key or has_openai_key or has_gemeni_key):
-            sys.stderr.write("Warning: Neither ANTHROPIC_API_KEY, OPENAI_API_KEY, nor GEMENI_API_KEY is set. AI Agent will not work.\n")
+        # Initialize Bank Agent (Exchange Rate) - always available
+        try:
+            self.bank_agent = AI_Agent()
+            sys.stderr.write("Bank Agent initialized successfully\n")
             sys.stderr.flush()
-            self.agent = None
-        else:
-            self.agent = SmartCalculatorAgent(self.toolkit)
+        except Exception as e:
+            sys.stderr.write(f"Error: Failed to initialize Bank Agent: {e}\n")
+            sys.stderr.flush()
+            self.bank_agent = None
 
     def handle_request(self, request: dict) -> dict:
 
         action = request.get("action")
 
         try:
+            # Exchange Rate - Get Rate
+            if action == "exchange_rate":
+                currency = request.get("currency")
+                if not currency:
+                    return {"success": False, "error": "Missing currency"}
 
-            if action == "calc_digit":
-                value = request.get("value")
-                self.engine.press_digit(value)
-                return {"success": True, "display": self.engine.display}
+                rate_type = request.get("rate_type", "cash_sell")
+                result = self.bank_agent.get_exchange_rate(currency, rate_type)
+                return result
 
-            elif action == "calc_operator":
-                operator = request.get("operator")
-                self.engine.press_operator(operator)
-                return {"success": True, "display": self.engine.display}
+            # Exchange Rate - Calculate Exchange
+            elif action == "calculate_exchange":
+                currency = request.get("currency")
+                twd_amount = request.get("twd_amount")
+                is_buying = request.get("is_buying", True)
 
-            elif action == "calc_equals":
-                self.engine.press_equals()
-                return {"success": True, "display": self.engine.display}
+                if not currency or twd_amount is None:
+                    return {"success": False, "error": "Missing currency or twd_amount"}
 
-            elif action == "calc_clear":
-                self.engine.clear()
-                return {"success": True, "display": self.engine.display}
+                result = self.bank_agent.calculate_exchange(currency, float(twd_amount), is_buying)
+                return result
 
-            elif action == "calc_backspace":
-                self.engine.backspace()
-                return {"success": True, "display": self.engine.display}
+            # Exchange Rate - Get Multiple Rates
+            elif action == "get_multiple_rates":
+                currencies = request.get("currencies")
+                if not currencies:
+                    return {"success": False, "error": "Missing currencies"}
 
-            # AI Agent �b
-            elif action == "agent":
-                if not self.agent:
-                    return {
-                        "success": False,
-                        "error": "AI Agent not available. Please set ANTHROPIC_API_KEY."
-                    }
+                result = self.bank_agent.get_multiple_rates(currencies)
+                return result
 
+            # Exchange Rate - Get Bank Rules
+            elif action == "get_bank_rules":
+                currency = request.get("currency")
+                result = self.bank_agent.get_bank_rules(currency)
+                return result
+
+            # Exchange Rate - Get Role Info
+            elif action == "bank_agent_info":
+                result = self.bank_agent.roles()
+                return {"success": True, "info": result}
+
+            # AI Chat - Process natural language query
+            elif action == "ai_chat":
                 query = request.get("query")
                 if not query:
                     return {"success": False, "error": "Missing query"}
 
-                response = self.agent.process_query(query)
-                return {"success": True, "response": response}
+                result = self.bank_agent.process_query(query)
+                return result
 
-            # *��\
+            # Unknown action
             else:
                 return {"success": False, "error": f"Unknown action: {action}"}
 
