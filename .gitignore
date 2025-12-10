@@ -489,3 +489,5 @@ cython_debug/
 #.idea/
 
 !/.env
+/frontend/release/
+/frontend/dist-electron/
