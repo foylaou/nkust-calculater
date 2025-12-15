@@ -94,4 +94,3 @@ jobs:
             artifacts/*/*.exe
             artifacts/*/*.AppImage
             artifacts/*/*.dmg
-            artifacts/*/*.blockmap
