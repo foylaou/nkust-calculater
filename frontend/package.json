@@ -8,7 +8,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && electron-builder",
+    "build": "tsc && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "electron:dev": "electron .",
@@ -59,11 +59,8 @@
     ],
     "extraResources": [
       {
-        "from": "../backend/dist/",
-        "to": "backend/",
-        "filter": [
-          "**/*"
-        ]
+        "from": "../backend/dist/ipc_server",
+        "to": "backend/ipc_server"
       }
     ],
     "win": {
