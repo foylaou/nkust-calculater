@@ -284,7 +284,8 @@ function createWindow() {
         });
     } else {
         // Production mode: load from built files
-        mainWindow.loadFile(path.join(__dirname, 'dist', 'index.html'));
+        // __dirname is dist-electron, frontend files are in ../dist
+        mainWindow.loadFile(path.join(__dirname, '..', 'dist', 'index.html'));
     }
 
     mainWindow.on('closed', () => {
