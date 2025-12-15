@@ -2,6 +2,7 @@ import { useState, useEffect} from 'react';
 import { Send, X, DollarSign } from 'lucide-react';
 import * as React from "react";
 import type { ExchangeRateResponse, CalculateExchangeResponse } from '../types/electron';
+import { evaluateExpression } from '../utils/calculator';
 
 export default function Calculator() {
     const [display, setDisplay] = useState('0');
@@ -190,7 +191,8 @@ export default function Calculator() {
                 return;
             }
 
-            const result = eval(finalEquation);
+            // Use safe evaluator instead of eval()
+            const result = evaluateExpression(finalEquation);
             setDisplay(String(result));
             setEquation('');
         } catch (error) {
