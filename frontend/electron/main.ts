@@ -46,14 +46,25 @@ function findPython(backendDir: string): string {
 
 // Python Backend Management
 function startPythonBackend() {
-    // In dev mode: dist-electron -> frontend -> nkust-calculater -> backend
-    const backendDir = isDev
-        ? path.join(__dirname, '..', '..', 'backend')
-        : path.join(process.resourcesPath, 'backend');
+    // In dev mode: use Python script, in production: use PyInstaller executable
+    let backendPath: string;
+    let backendDir: string;
+    let backendArgs: string[];
 
-    const backendPath = path.join(backendDir, 'ipc_server.py');
+    if (isDev) {
+        // Development: dist-electron -> frontend -> nkust-calculater -> backend
+        backendDir = path.join(__dirname, '..', '..', 'backend');
+        backendPath = findPython(backendDir);
+        backendArgs = [path.join(backendDir, 'ipc_server.py')];
+    } else {
+        // Production: use PyInstaller executable
+        backendDir = path.join(process.resourcesPath, 'backend', 'ipc_server');
+        backendPath = path.join(backendDir, 'ipc_server');
+        backendArgs = [];
+    }
 
     console.log('Starting Python backend:', backendPath);
+    console.log('Backend arguments:', backendArgs);
     console.log('Current directory:', __dirname);
     console.log('Backend exists:', existsSync(backendPath));
 
@@ -63,10 +74,8 @@ function startPythonBackend() {
         return;
     }
 
-    const pythonPath = findPython(backendDir);
-
     try {
-        pythonProcess = spawn(pythonPath, [backendPath], {
+        pythonProcess = spawn(backendPath, backendArgs, {
             stdio: ['pipe', 'pipe', 'pipe'],
             env: { ...process.env },
             cwd: backendDir

@@ -59,9 +59,8 @@
     ],
     "extraResources": [
       {
-        "from": "../backend",
-        "to": "backend",
-        "filter": ["**/*", "!**/__pycache__", "!**/*.pyc", "!.venv/**/*"]
+        "from": "../backend/dist/ipc_server",
+        "to": "backend/ipc_server"
       }
     ],
     "win": {
