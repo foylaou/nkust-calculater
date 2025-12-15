@@ -493,3 +493,8 @@ cython_debug/
 /frontend/dist-electron/
 !/.env
 /.env
+/.idea/.gitignore
+/.idea/modules.xml
+/.idea/nkust-calculater.iml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/vcs.xml
